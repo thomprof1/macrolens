@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>MacroLens • Sources</title>
+	<link rel="stylesheet" href="../assets/css/styles.css">
+	<script src="../assets/js/app.js" defer></script>
+</head>
+<body>
+	<header class="topbar">
+		<div class="container topbar__inner">
+			<a class="brand" href="../index.html" aria-label="MacroLens Home">
+				<span class="brand__mark">ML</span>
+				<span class="brand__text">MacroLens</span>
+			</a>
+
+			<nav class="nav" data-nav>
+				<a class="nav__link" href="../index.html">Dashboard</a>
+				<a class="nav__link" href="calendar.html">Calendar</a>
+				<a class="nav__link" href="earnings.html">Earnings</a>
+				<a class="nav__link" href="news.html">News</a>
+				<a class="nav__link is-active" href="links.html">Sources</a>
+				<a class="nav__link" href="watchlist.html">Watchlist</a>
+			</nav>
+
+			<div class="topbar__actions">
+				<button class="iconbtn" type="button" data-nav-toggle aria-label="Open menu">
+					<span class="iconbtn__label">Menu</span>
+				</button>
+
+				<button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle theme">
+					<span class="iconbtn__dot" aria-hidden="true"></span>
+					<span class="iconbtn__label" data-theme-label>Light</span>
+				</button>
+			</div>
+		</div>
+	</header>
+
+	<main class="container stack">
+		<section class="panel glass">
+			<div class="panel__head">
+				<h1 class="h2">Official Sources</h1>
+				<span class="muted">Primary data • direct links</span>
+			</div>
+
+			<div class="controls controls--4">
+				<input class="input" id="source-search" type="search" placeholder="Search sources (ex: CPI, FOMC, 10-K, auctions)">
+				<select class="select" id="source-category">
+					<option value="all">All</option>
+					<option value="macro">Macro / Economy</option>
+					<option value="policy">Policy / Fed</option>
+					<option value="filings">Filings / Disclosures</option>
+					<option value="markets">Markets / Data</option>
+				</select>
+				<select class="select" id="source-priority">
+					<option value="all">All</option>
+					<option value="daily">Daily use</option>
+					<option value="weekly">Weekly use</option>
+				</select>
+				<button class="btn" type="button" id="source-reset">Reset</button>
+			</div>
+
+			<div class="grid grid--2" id="source-grid">
+				<!-- FED -->
+				<article class="card glass source" data-tags="policy fed fomc rates minutes statement dot plot press conference" data-cat="policy" data-priority="daily">
+					<div class="card__label">Federal Reserve (Fed)</div>
+					<div class="card__sub muted">FOMC statements, minutes, SEP (“dot plot”), press conferences</div>
+					<div class="list" style="margin-top:12px;">
+						<a class="list__row" href="https://www.federalreserve.gov/monetarypolicy/fomc.htm" target="_blank" rel="noopener">FOMC main page</a>
+						<a class="list__row" href="https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm" target="_blank" rel="noopener">FOMC calendars</a>
+						<a class="list__row" href="https://www.federalreserve.gov/monetarypolicy/fomcminutes.htm" target="_blank" rel="noopener">FOMC minutes</a>
+						<a class="list__row" href="https://www.federalreserve.gov/monetarypolicy/fomcprojtabl.htm" target="_blank" rel="noopener">SEP (dot plot tables)</a>
+					</div>
+				</article>
+
+				<!-- BLS -->
+				<article class="card glass source" data-tags="macro bls cpi inflation jobs nfp unemployment cpi core cpi ppi cpi release" data-cat="macro" data-priority="daily">
+					<div class="card__label">Bureau of Labor Statistics (BLS)</div>
+					<div class="card__sub muted">CPI (inflation), jobs, unemployment rate, PPI</div>
+					<div class="list" style="margin-top:12px;">
+						<a class="list__row" href="https://www.bls.gov/cpi/" target="_blank" rel="noopener">CPI</a>
+						<a class="list__row" href="https://www.bls.gov/news.release/empsit.toc.htm" target="_blank" rel="noopener">Employment Situation (NFP)</a>
+						<a class="list__row" href="https://www.bls.gov/ppi/" target="_blank" rel="noopener">PPI</a>
+						<a class="list__row" href="https://www.bls.gov/schedule/" target="_blank" rel="noopener">Release calendar</a>
+					</div>
+				</article>
+
+				<!-- BEA -->
+				<article class="card glass source" data-tags="macro bea gdp pce personal income consumer spending inflation pce core pce" data-cat="macro" data-priority="weekly">
+					<div class="card__label">Bureau of Economic Analysis (BEA)</div>
+					<div class="card__sub muted">GDP, PCE inflation, personal income & outlays</div>
+					<div class="list" style="margin-top:12px;">
+						<a class="list__row" href="https://www.bea.gov/data/gdp/gross-domestic-product" target="_blank" rel="noopener">GDP</a>
+						<a class="list__row" href="https://www.bea.gov/data/personal-consumption-expenditures-price-index" target="_blank" rel="noopener">PCE Price Index</a>
+						<a class="list__row" href="https://www.bea.gov/data/income-saving/personal-income" target="_blank" rel="noopener">Personal income & outlays</a>
+						<a class="list__row" href="https://www.bea.gov/news/schedule" target="_blank" rel="noopener">Release schedule</a>
+					</div>
+				</article>
+
+				<!-- SEC EDGAR -->
+				<article class="card glass source" data-tags="filings sec edgar 10-k 10-q 8-k s-1 forms insider filings" data-cat="filings" data-priority="daily">
+					<div class="card__label">SEC EDGAR</div>
+					<div class="card__sub muted">Company filings: 10-K, 10-Q, 8-K, S-1, proxy statements</div>
+					<div class="list" style="margin-top:12px;">
+						<a class="list__row" href="https://www.sec.gov/edgar/search/" target="_blank" rel="noopener">EDGAR search</a>
+						<a class="list__row" href="https://www.sec.gov/edgar/browse/" target="_blank" rel="noopener">Browse filings</a>
+						<a class="list__row" href="https://www.sec.gov/Archives/edgar/data/" target="_blank" rel="noopener">EDGAR data archives</a>
+						<a class="list__row" href="https://www.sec.gov/Forms" target="_blank" rel="noopener">SEC forms list</a>
+					</div>
+				</article>
+
+				<!-- TREASURY -->
+				<article class="card glass source" data-tags="markets treasury yields auctions bills notes bonds curve refunding" data-cat="markets" data-priority="weekly">
+					<div class="card__label">U.S. Treasury</div>
+					<div class="card__sub muted">Auctions, yield curve, refunding, debt data</div>
+					<div class="list" style="margin-top:12px;">
+						<a class="list__row" href="https://home.treasury.gov/resource-center/data-chart-center/interest-rates" target="_blank" rel="noopener">Treasury yield curve</a>
+						<a class="list__row" href="https://www.treasurydirect.gov/auctions/" target="_blank" rel="noopener">Auction schedule</a>
+						<a class="list__row" href="https://home.treasury.gov/news/press-releases" target="_blank" rel="noopener">Press releases</a>
+						<a class="list__row" href="https://fiscaldata.treasury.gov/" target="_blank" rel="noopener">FiscalData</a>
+					</div>
+				</article>
+
+				<!-- CME -->
+				<article class="card glass source" data-tags="markets cme futures fedwatch probabilities rates futures spx es nq" data-cat="markets" data-priority="daily">
+					<div class="card__label">CME Group</div>
+					<div class="card__sub muted">Futures markets + FedWatch probabilities</div>
+					<div class="list" style="margin-top:12px;">
+						<a class="list__row" href="https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html" target="_blank" rel="noopener">CME FedWatch Tool</a>
+						<a class="list__row" href="https://www.cmegroup.com/markets/equities.html" target="_blank" rel="noopener">Equity index futures</a>
+						<a class="list__row" href="https://www.cmegroup.com/markets/interest-rates.html" target="_blank" rel="noopener">Rates futures</a>
+						<a class="list__row" href="https://www.cmegroup.com/markets/energy.html" target="_blank" rel="noopener">Energy futures</a>
+					</div>
+				</article>
+
+				<!-- FRED -->
+				<article class="card glass source" data-tags="markets data fred charts economic data rates inflation unemployment gdp" data-cat="markets" data-priority="weekly">
+					<div class="card__label">FRED (St. Louis Fed)</div>
+					<div class="card__sub muted">Charts for economic time series</div>
+					<div class="list" style="margin-top:12px;">
+						<a class="list__row" href="https://fred.stlouisfed.org/" target="_blank" rel="noopener">FRED home</a>
+						<a class="list__row" href="https://fred.stlouisfed.org/categories" target="_blank" rel="noopener">Categories</a>
+						<a class="list__row" href="https://fred.stlouisfed.org/releases" target="_blank" rel="noopener">Releases</a>
+						<a class="list__row" href="https://fred.stlouisfed.org/tags/series" target="_blank" rel="noopener">Series tags</a>
+					</div>
+				</article>
+
+				<!-- CFTC -->
+				<article class="card glass source" data-tags="markets cftc cot report commitment of traders positioning futures" data-cat="markets" data-priority="weekly">
+					<div class="card__label">CFTC</div>
+					<div class="card__sub muted">Commitments of Traders (COT) positioning data</div>
+					<div class="list" style="margin-top:12px;">
+						<a class="list__row" href="https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm" target="_blank" rel="noopener">COT reports</a>
+						<a class="list__row" href="https://www.cftc.gov/MarketReports/index.htm" target="_blank" rel="noopener">Market reports</a>
+						<a class="list__row" href="https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalCompressed/index.htm" target="_blank" rel="noopener">Historical (compressed)</a>
+						<a class="list__row" href="https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm#futures" target="_blank" rel="noopener">Futures only</a>
+					</div>
+				</article>
+			</div>
+
+			<p class="muted" style="margin-top:16px;">
+				Tip: these are all official sources. Next we’ll add “popular investor tools” as a separate section.
+			</p>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<div class="container footer__inner">
+			<span class="muted">© <span id="year"></span> MacroLens</span>
+			<span class="muted">Links open in new tab</span>
+		</div>
+	</footer>
+
+	<script>
+		(() => {
+			const qs = (s) => document.querySelector(s);
+			const cards = Array.from(document.querySelectorAll(".source"));
+
+			const searchEl = qs("#source-search");
+			const catEl = qs("#source-category");
+			const priEl = qs("#source-priority");
+			const resetEl = qs("#source-reset");
+
+			const apply = () => {
+				const q = (searchEl.value || "").trim().toLowerCase();
+				const cat = catEl.value;
+				const pri = priEl.value;
+
+				cards.forEach((card) => {
+					const tags = (card.getAttribute("data-tags") || "").toLowerCase();
+					const c = card.getAttribute("data-cat");
+					const p = card.getAttribute("data-priority");
+
+					const okQ = !q || tags.includes(q);
+					const okC = cat === "all" || c === cat;
+					const okP = pri === "all" || p === pri;
+
+					card.style.display = (okQ && okC && okP) ? "" : "none";
+				});
+			};
+
+			[searchEl, catEl, priEl].forEach((el) => el.addEventListener("input", apply));
+
+			resetEl.addEventListener("click", () => {
+				searchEl.value = "";
+				catEl.value = "all";
+				priEl.value = "all";
+				apply();
+			});
+		})();
+	</script>
+</body>
+</html>
