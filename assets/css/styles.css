@@ -348,3 +348,28 @@ html[data-theme="dark"] .skeleton::after{
 	.iconbtn:hover, .btn:hover{transform:none}
 	.skeleton::after{animation:none}
 }
+
+/* ===== Stronger Dark Mode ===== */
+html[data-theme="dark"] body{
+	background:
+		radial-gradient(900px 600px at 18% 8%, rgba(var(--accent), .18), transparent 60%),
+		radial-gradient(900px 600px at 82% 0%, rgba(var(--accent2), .10), transparent 55%),
+		radial-gradient(900px 700px at 70% 90%, rgba(var(--accent3), .10), transparent 60%),
+		linear-gradient(180deg, rgb(6 8 14), rgb(10 14 24));
+}
+
+/* Darken “glass” surfaces so text pops */
+html[data-theme="dark"] .glass{
+	background: rgba(18, 22, 34, .70);
+	border-color: rgba(255,255,255,.10);
+}
+
+html[data-theme="dark"] .topbar{
+	background: rgba(18, 22, 34, .65);
+	border-bottom-color: rgba(255,255,255,.10);
+}
+
+html[data-theme="dark"] .nav{
+	background: rgba(18, 22, 34, .60);
+	border-color: rgba(255,255,255,.10);
+}
