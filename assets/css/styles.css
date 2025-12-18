@@ -26,8 +26,8 @@
 }
 
 html[data-theme="dark"]{
-	--bg0: 8 10 16;
-	--bg1: 12 16 26;
+	--bg0: 6 8 14;
+	--bg1: 10 14 24;
 
 	--text: 234 238 246;
 	--muted: 164 176 196;
@@ -45,16 +45,25 @@ html[data-theme="dark"]{
 
 *{box-sizing:border-box}
 
-body{
+html, body{
+	width:100%;
+	min-height:100%;
 	margin:0;
+	background: rgb(var(--bg0));
+}
+
+body{
 	font-family:var(--font);
 	color:rgb(var(--text));
 	line-height:1.6;
+
 	background:
 		radial-gradient(900px 600px at 18% 8%, rgba(var(--accent), .24), transparent 60%),
 		radial-gradient(900px 600px at 82% 0%, rgba(var(--accent2), .16), transparent 55%),
 		radial-gradient(900px 700px at 70% 90%, rgba(var(--accent3), .14), transparent 60%),
 		linear-gradient(180deg, rgb(var(--bg0)), rgb(var(--bg1)));
+
+	background-attachment: fixed;
 	min-height:100vh;
 }
 
@@ -343,33 +352,119 @@ html[data-theme="dark"] .skeleton::after{
 }
 @keyframes shimmer{100%{transform: translateX(100%)}}
 
+/* Dark mode: make glass slightly deeper for contrast */
+html[data-theme="dark"] .glass{
+	background: rgba(18, 22, 34, .78);
+	border-color: rgba(255,255,255,.10);
+}
+
+/* Dark mode: topbar/nav slightly deeper too */
+html[data-theme="dark"] .topbar{
+	background: rgba(18, 22, 34, .65);
+	border-bottom-color: rgba(255,255,255,.10);
+}
+html[data-theme="dark"] .nav{
+	background: rgba(18, 22, 34, .60);
+	border-color: rgba(255,255,255,.10);
+}
+
 @media (prefers-reduced-motion: reduce){
 	*{transition:none !important}
 	.iconbtn:hover, .btn:hover{transform:none}
 	.skeleton::after{animation:none}
 }
-
-/* ===== Stronger Dark Mode ===== */
-html[data-theme="dark"] body{
-	background:
-		radial-gradient(900px 600px at 18% 8%, rgba(var(--accent), .18), transparent 60%),
-		radial-gradient(900px 600px at 82% 0%, rgba(var(--accent2), .10), transparent 55%),
-		radial-gradient(900px 700px at 70% 90%, rgba(var(--accent3), .10), transparent 60%),
-		linear-gradient(180deg, rgb(6 8 14), rgb(10 14 24));
+/* ===== Year Calendar (2026) ===== */
+.cal-layout{
+	display:grid;
+	gap:20px;
+	grid-template-columns: 1fr;
+}
+@media (min-width: 980px){
+	.cal-layout{grid-template-columns: 1.4fr .6fr; align-items:start}
 }
 
-/* Darken “glass” surfaces so text pops */
-html[data-theme="dark"] .glass{
-	background: rgba(18, 22, 34, .70);
-	border-color: rgba(255,255,255,.10);
+.cal-year{
+	display:grid;
+	gap:16px;
+	grid-template-columns: 1fr;
+}
+@media (min-width: 740px){
+	.cal-year{grid-template-columns: 1fr 1fr}
+}
+@media (min-width: 1180px){
+	.cal-year{grid-template-columns: 1fr 1fr 1fr}
 }
 
-html[data-theme="dark"] .topbar{
-	background: rgba(18, 22, 34, .65);
-	border-bottom-color: rgba(255,255,255,.10);
+.cal-month{padding:14px}
+.cal-month__head{
+	font-weight:900;
+	letter-spacing:-.2px;
+	margin-bottom:10px;
 }
 
-html[data-theme="dark"] .nav{
-	background: rgba(18, 22, 34, .60);
-	border-color: rgba(255,255,255,.10);
+.cal-dow{
+	display:grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap:6px;
+	margin-bottom:8px;
 }
+.cal-dow__cell{
+	font-size:12px;
+	font-weight:900;
+	text-align:center;
+	opacity:.8;
+}
+
+.cal-grid{
+	display:grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap:6px;
+}
+
+.cal-cell{
+	border:1px solid rgba(var(--stroke), .14);
+	background: rgba(var(--card), .40);
+	border-radius:14px;
+	padding:8px 8px 10px;
+	min-height:52px;
+	cursor:pointer;
+	box-shadow: var(--shadow2);
+	transition: transform .12s ease;
+	color: rgb(var(--text));
+}
+.cal-cell:hover{transform: translateY(-1px)}
+.cal-cell--blank{
+	border:none;
+	background: transparent;
+	box-shadow:none;
+}
+.cal-cell--quiet{
+	opacity:.55;
+	box-shadow:none;
+}
+.cal-cell.is-selected{
+	outline: 2px solid rgba(var(--accent), .55);
+}
+
+.cal-num{
+	font-weight:900;
+	font-size:13px;
+	line-height:1;
+}
+
+.cal-dots{
+	display:flex;
+	gap:6px;
+	margin-top:8px;
+}
+.cal-dot{
+	width:8px;
+	height:8px;
+	border-radius:999px;
+	display:inline-block;
+}
+.cal-dot--macro{background: rgb(var(--accent))}
+.cal-dot--earnings{background: rgb(var(--accent2))}
+.cal-dot--more{background: rgb(var(--accent3))}
+
+.cal-side{padding:18px}

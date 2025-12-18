@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>MacroLens • Calendar</title>
+	<title>MacroLens • Calendar (2026)</title>
 	<link rel="stylesheet" href="../assets/css/styles.css">
 	<script src="../assets/js/app.js" defer></script>
 </head>
@@ -40,136 +40,311 @@
 	<main class="container stack">
 		<section class="panel glass">
 			<div class="panel__head">
-				<h1 class="h2">Market Events Calendar</h1>
-				<span class="muted">Built-in starter list (we’ll connect real feeds next)</span>
+				<h1 class="h2">2026 Market Calendar</h1>
+				<span class="muted">Year view • click a day for details</span>
 			</div>
 
 			<div class="controls controls--4">
-				<input class="input" id="cal-search" type="search" placeholder="Search (CPI, FOMC, NFP, GDP, PCE…)">
-				<select class="select" id="cal-type">
-					<option value="all">All types</option>
-					<option value="fed">Fed</option>
-					<option value="inflation">Inflation</option>
-					<option value="jobs">Jobs</option>
-					<option value="growth">Growth</option>
-					<option value="rates">Rates / Auctions</option>
+				<input class="input" id="cal-search" type="search" placeholder="Search events (CPI, FOMC, AAPL, NVDA…)">
+				<select class="select" id="cal-kind">
+					<option value="all">All events</option>
+					<option value="macro">Macro</option>
+					<option value="earnings">Earnings</option>
 				</select>
-				<select class="select" id="cal-range">
-					<option value="30">Next 30 days</option>
-					<option value="60">Next 60 days</option>
-					<option value="90">Next 90 days</option>
-					<option value="365">Next 365 days</option>
+				<select class="select" id="cal-impact">
+					<option value="all">All impact</option>
+					<option value="very-high">Very High</option>
+					<option value="high">High</option>
+					<option value="medium">Medium</option>
 				</select>
-				<button class="btn" id="cal-reset" type="button">Reset</button>
+				<button class="btn" id="cal-today" type="button">Go to Today</button>
 			</div>
 
-			<div class="list" id="cal-list"></div>
+			<div class="cal-layout">
+				<div class="cal-year" id="cal-year"></div>
 
-			<p class="muted" style="margin-top:16px;">
-				Next: real economic calendar feed + caching so it stays fast.
-			</p>
+				<aside class="cal-side glass" id="cal-side" aria-live="polite">
+					<div class="panel__head">
+						<h2 class="h2" id="side-title">Select a date</h2>
+						<span class="badge" id="side-count">0</span>
+					</div>
+
+					<div class="list" id="side-list">
+						<div class="list__row muted">Click any day with dots to see what’s happening.</div>
+					</div>
+
+					<p class="muted" style="margin-top:14px;">
+						Next: auto-import earnings for your Watchlist + real macro feeds.
+					</p>
+				</aside>
+			</div>
 		</section>
 	</main>
 
 	<footer class="footer">
 		<div class="container footer__inner">
 			<span class="muted">© <span id="year"></span> MacroLens</span>
-			<span class="muted">Starter calendar</span>
+			<span class="muted">Calendar • 2026</span>
 		</div>
 	</footer>
 
 	<script>
 		(() => {
+			"use strict";
+
+			const YEAR = 2026;
+
 			const qs = (s) => document.querySelector(s);
-
+			const yearEl = qs("#cal-year");
 			const searchEl = qs("#cal-search");
-			const typeEl = qs("#cal-type");
-			const rangeEl = qs("#cal-range");
-			const resetEl = qs("#cal-reset");
-			const listEl = qs("#cal-list");
+			const kindEl = qs("#cal-kind");
+			const impactEl = qs("#cal-impact");
+			const todayBtn = qs("#cal-today");
 
-			const now = new Date();
-			const addDays = (d) => new Date(now.getTime() + d * 24 * 60 * 60 * 1000);
+			const sideTitle = qs("#side-title");
+			const sideCount = qs("#side-count");
+			const sideList = qs("#side-list");
 
-			// Starter events (placeholders). We’ll replace with real feeds later.
+			const pad2 = (n) => String(n).padStart(2, "0");
+			const iso = (y, m, d) => `${y}-${pad2(m)}-${pad2(d)}`;
+			const fmtDate = (d) => d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+
+			/* =========================
+			   Starter Events (2026 placeholders)
+			   Replace with real feeds later
+			========================= */
 			const events = [
-				{ name: "CPI (Consumer Price Index)", type: "inflation", date: addDays(10), impact: "High", notes: "Inflation read; markets react fast." },
-				{ name: "Core CPI", type: "inflation", date: addDays(10), impact: "High", notes: "Fed-sensitive inflation metric." },
-				{ name: "FOMC Rate Decision", type: "fed", date: addDays(21), impact: "Very High", notes: "Statement + Powell presser." },
-				{ name: "FOMC Minutes", type: "fed", date: addDays(35), impact: "Medium", notes: "Details on policy thinking." },
-				{ name: "Nonfarm Payrolls (NFP)", type: "jobs", date: addDays(17), impact: "Very High", notes: "Jobs / wages / unemployment." },
-				{ name: "Initial Jobless Claims", type: "jobs", date: addDays(3), impact: "Medium", notes: "Weekly labor signal." },
-				{ name: "GDP (Advance)", type: "growth", date: addDays(26), impact: "High", notes: "Growth snapshot; revisions matter." },
-				{ name: "PCE Inflation", type: "inflation", date: addDays(28), impact: "High", notes: "Fed’s preferred inflation gauge." },
-				{ name: "2Y/5Y/7Y Treasury Auctions", type: "rates", date: addDays(6), impact: "Medium", notes: "Can move yields and risk appetite." }
-			].sort((a, b) => a.date - b.date);
+				// Macro (example)
+				{ date: "2026-01-14", kind: "macro", impact: "high", title: "CPI", note: "Inflation print (headline + core)." },
+				{ date: "2026-02-06", kind: "macro", impact: "very-high", title: "NFP (Jobs)", note: "Employment situation." },
+				{ date: "2026-03-18", kind: "macro", impact: "very-high", title: "FOMC Rate Decision", note: "Statement + Powell presser." },
+				{ date: "2026-04-30", kind: "macro", impact: "high", title: "GDP (Advance)", note: "Growth snapshot." },
+				{ date: "2026-05-29", kind: "macro", impact: "high", title: "PCE Inflation", note: "Fed’s preferred inflation gauge." },
 
-			const fmt = (d) => d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+				// Earnings (example)
+				{ date: "2026-01-28", kind: "earnings", impact: "medium", title: "Earnings: AAPL (AMC)", note: "Apple • After close" },
+				{ date: "2026-02-04", kind: "earnings", impact: "medium", title: "Earnings: MSFT (AMC)", note: "Microsoft • After close" },
+				{ date: "2026-02-18", kind: "earnings", impact: "medium", title: "Earnings: NVDA (AMC)", note: "NVIDIA • After close" },
+				{ date: "2026-02-26", kind: "earnings", impact: "medium", title: "Earnings: AMZN (AMC)", note: "Amazon • After close" }
+			];
 
-			const render = () => {
-				const q = (searchEl.value || "").trim().toLowerCase();
-				const type = typeEl.value;
-				const days = Number(rangeEl.value);
+			const getFilters = () => ({
+				q: (searchEl.value || "").trim().toLowerCase(),
+				kind: kindEl.value,
+				impact: impactEl.value
+			});
 
-				const cutoff = addDays(days);
+			const matchesFilters = (ev) => {
+				const f = getFilters();
 
-				const filtered = events.filter((e) => {
-					const inRange = e.date <= cutoff;
-					const okType = type === "all" || e.type === type;
-					const okQ = !q || (e.name + " " + e.notes).toLowerCase().includes(q);
-					return inRange && okType && okQ;
+				const okKind = f.kind === "all" || ev.kind === f.kind;
+				const okImpact = f.impact === "all" || ev.impact === f.impact;
+
+				const hay = `${ev.title} ${ev.note || ""}`.toLowerCase();
+				const okQ = !f.q || hay.includes(f.q);
+
+				return okKind && okImpact && okQ;
+			};
+
+			const eventsByDate = () => {
+				const map = new Map();
+				events.forEach((ev) => {
+					if (!map.has(ev.date)) map.set(ev.date, []);
+					map.get(ev.date).push(ev);
 				});
+				return map;
+			};
 
-				listEl.innerHTML = "";
+			const impactLabel = (i) => {
+				if (i === "very-high") return "Very High";
+				if (i === "high") return "High";
+				return "Medium";
+			};
 
-				if (!filtered.length) {
+			const renderSide = (dateISO) => {
+				const d = new Date(`${dateISO}T12:00:00`);
+				sideTitle.textContent = fmtDate(d);
+
+				const dayEvents = events
+					.filter((ev) => ev.date === dateISO)
+					.filter(matchesFilters);
+
+				sideCount.textContent = String(dayEvents.length);
+				sideList.innerHTML = "";
+
+				if (!dayEvents.length){
 					const row = document.createElement("div");
 					row.className = "list__row muted";
-					row.textContent = "No events match your filters.";
-					listEl.appendChild(row);
+					row.textContent = "No events (with your filters) on this date.";
+					sideList.appendChild(row);
 					return;
 				}
 
-				filtered.forEach((e) => {
+				dayEvents.forEach((ev) => {
 					const row = document.createElement("div");
 					row.className = "list__row";
 
 					const left = document.createElement("div");
 					left.className = "list__left";
-					left.textContent = fmt(e.date);
+					left.textContent = ev.title;
 
 					const right = document.createElement("div");
-					right.style.display = "grid";
-					right.style.gap = "4px";
-					right.style.justifyItems = "end";
-
-					const title = document.createElement("div");
-					title.style.fontWeight = "900";
-					title.textContent = e.name;
-
-					const sub = document.createElement("div");
-					sub.className = "muted";
-					sub.style.fontSize = "13px";
-					sub.textContent = `Impact: ${e.impact} • ${e.notes}`;
-
-					right.appendChild(title);
-					right.appendChild(sub);
+					right.className = "muted";
+					right.style.fontSize = "13px";
+					right.style.textAlign = "right";
+					right.textContent = `${ev.kind.toUpperCase()} • ${impactLabel(ev.impact)}`;
 
 					row.appendChild(left);
 					row.appendChild(right);
-					listEl.appendChild(row);
+					sideList.appendChild(row);
+
+					if (ev.note){
+						const note = document.createElement("div");
+						note.className = "muted";
+						note.style.fontSize = "13px";
+						note.style.margin = "6px 4px 10px 4px";
+						note.textContent = ev.note;
+						sideList.appendChild(note);
+					}
 				});
 			};
 
-			[searchEl, typeEl, rangeEl].forEach((el) => el.addEventListener("input", render));
-			resetEl.addEventListener("click", () => {
-				searchEl.value = "";
-				typeEl.value = "all";
-				rangeEl.value = "30";
-				render();
-			});
+			const monthName = (mIndex) => {
+				const d = new Date(YEAR, mIndex, 1);
+				return d.toLocaleDateString(undefined, { month: "long" });
+			};
 
-			render();
+			const buildMonth = (mIndex, map) => {
+				const monthCard = document.createElement("section");
+				monthCard.className = "cal-month glass";
+
+				const head = document.createElement("div");
+				head.className = "cal-month__head";
+				head.textContent = `${monthName(mIndex)} ${YEAR}`;
+				monthCard.appendChild(head);
+
+				const dow = document.createElement("div");
+				dow.className = "cal-dow";
+				["S","M","T","W","T","F","S"].forEach((x) => {
+					const c = document.createElement("div");
+					c.className = "cal-dow__cell muted";
+					c.textContent = x;
+					dow.appendChild(c);
+				});
+				monthCard.appendChild(dow);
+
+				const grid = document.createElement("div");
+				grid.className = "cal-grid";
+
+				const first = new Date(YEAR, mIndex, 1);
+				const startDow = first.getDay(); // 0=Sun
+				const daysInMonth = new Date(YEAR, mIndex + 1, 0).getDate();
+
+				// blanks
+				for (let i = 0; i < startDow; i++){
+					const blank = document.createElement("div");
+					blank.className = "cal-cell cal-cell--blank";
+					grid.appendChild(blank);
+				}
+
+				for (let day = 1; day <= daysInMonth; day++){
+					const dateISO = iso(YEAR, mIndex + 1, day);
+					const allOnDay = map.get(dateISO) || [];
+
+					// apply filters just for dot visibility
+					const visibleOnDay = allOnDay.filter(matchesFilters);
+
+					const btn = document.createElement("button");
+					btn.type = "button";
+					btn.className = "cal-cell";
+					btn.setAttribute("data-date", dateISO);
+					btn.setAttribute("aria-label", dateISO);
+
+					const num = document.createElement("div");
+					num.className = "cal-num";
+					num.textContent = String(day);
+
+					const dots = document.createElement("div");
+					dots.className = "cal-dots";
+
+					// Up to 3 dots: macro + earnings + extra
+					const kinds = new Set(visibleOnDay.map((e) => e.kind));
+					if (kinds.has("macro")){
+						const d = document.createElement("span");
+						d.className = "cal-dot cal-dot--macro";
+						dots.appendChild(d);
+					}
+					if (kinds.has("earnings")){
+						const d = document.createElement("span");
+						d.className = "cal-dot cal-dot--earnings";
+						dots.appendChild(d);
+					}
+					if (visibleOnDay.length > 2){
+						const d = document.createElement("span");
+						d.className = "cal-dot cal-dot--more";
+						dots.appendChild(d);
+					}
+
+					btn.appendChild(num);
+					btn.appendChild(dots);
+
+					if (!visibleOnDay.length){
+						btn.classList.add("cal-cell--quiet");
+					}
+
+					btn.addEventListener("click", () => {
+						document.querySelectorAll(".cal-cell.is-selected").forEach((x) => x.classList.remove("is-selected"));
+						btn.classList.add("is-selected");
+						renderSide(dateISO);
+					});
+
+					grid.appendChild(btn);
+				}
+
+				monthCard.appendChild(grid);
+				return monthCard;
+			};
+
+			const renderYear = () => {
+				yearEl.innerHTML = "";
+				const map = eventsByDate();
+
+				for (let m = 0; m < 12; m++){
+					yearEl.appendChild(buildMonth(m, map));
+				}
+			};
+
+			const goToToday = () => {
+				const t = new Date();
+				if (t.getFullYear() !== YEAR) return;
+
+				const dateISO = iso(YEAR, t.getMonth() + 1, t.getDate());
+				const btn = document.querySelector(`.cal-cell[data-date="${dateISO}"]`);
+				if (btn){
+					btn.scrollIntoView({ behavior: "smooth", block: "center" });
+					btn.click();
+				}
+			};
+
+			const rerender = () => {
+				// Rebuild dots + quiet cells according to filters
+				renderYear();
+
+				// If a date is selected, keep side panel consistent
+				const selected = document.querySelector(".cal-cell.is-selected");
+				if (selected){
+					renderSide(selected.getAttribute("data-date"));
+				}else{
+					sideTitle.textContent = "Select a date";
+					sideCount.textContent = "0";
+					sideList.innerHTML = `<div class="list__row muted">Click any day with dots to see what’s happening.</div>`;
+				}
+			};
+
+			[searchEl, kindEl, impactEl].forEach((el) => el.addEventListener("input", rerender));
+			todayBtn.addEventListener("click", goToToday);
+
+			renderYear();
 		})();
 	</script>
 </body>
