@@ -1,12 +1,107 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>MacroLens</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>MacroLens • Dashboard</title>
+	<link rel="stylesheet" href="assets/css/styles.css">
+	<script src="assets/js/app.js" defer></script>
 </head>
-<body style="font-family:system-ui; padding:40px;">
-	<h1>MacroLens</h1>
-	<p>If you see this, GitHub Pages works ✅</p>
+<body>
+	<header class="topbar">
+		<div class="container topbar__inner">
+			<a class="brand" href="index.html" aria-label="MacroLens Home">
+				<span class="brand__mark">ML</span>
+				<span class="brand__text">MacroLens</span>
+			</a>
+
+			<nav class="nav" data-nav>
+				<a class="nav__link is-active" href="index.html">Dashboard</a>
+				<a class="nav__link" href="pages/calendar.html">Calendar</a>
+				<a class="nav__link" href="pages/earnings.html">Earnings</a>
+				<a class="nav__link" href="pages/news.html">News</a>
+				<a class="nav__link" href="pages/links.html">Sources</a>
+				<a class="nav__link" href="pages/watchlist.html">Watchlist</a>
+			</nav>
+
+			<div class="topbar__actions">
+				<button class="iconbtn" type="button" data-nav-toggle aria-label="Open menu">
+					<span class="iconbtn__label">Menu</span>
+				</button>
+
+				<button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle theme">
+					<span class="iconbtn__dot" aria-hidden="true"></span>
+					<span class="iconbtn__label" data-theme-label>Light</span>
+				</button>
+			</div>
+		</div>
+	</header>
+
+	<main class="container stack">
+		<section class="hero glass">
+			<div class="hero__left">
+				<h1 class="h1">See the market clearly.</h1>
+				<p class="muted">
+					MacroLens is your investor hub for market movers: macro events, earnings, headlines, and primary sources.
+				</p>
+				<div class="hero__chips">
+					<span class="chip chip--a">Fast</span>
+					<span class="chip chip--b">Beginner-friendly</span>
+					<span class="chip chip--c">Pro-useful</span>
+				</div>
+			</div>
+
+			<div class="hero__right">
+				<div class="grid grid--3">
+					<div class="card glass">
+						<div class="card__label">Today’s Catalysts</div>
+						<div class="card__value" id="kpi-catalysts">—</div>
+						<div class="card__sub muted">Calendar feed</div>
+					</div>
+					<div class="card glass">
+						<div class="card__label">Earnings Today</div>
+						<div class="card__value" id="kpi-earnings">—</div>
+						<div class="card__sub muted">Earnings provider</div>
+					</div>
+					<div class="card glass">
+						<div class="card__label">Headlines</div>
+						<div class="card__value" id="kpi-headlines">—</div>
+						<div class="card__sub muted">News sources</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="grid grid--2">
+			<div class="panel glass">
+				<div class="panel__head">
+					<h2 class="h2">Today’s Market Movers</h2>
+					<span class="badge">Placeholder</span>
+				</div>
+				<div class="list">
+					<div class="list__row skeleton"></div>
+					<div class="list__row skeleton"></div>
+					<div class="list__row skeleton"></div>
+				</div>
+			</div>
+
+			<div class="panel glass">
+				<div class="panel__head">
+					<h2 class="h2">Watchlist Preview</h2>
+					<a class="link" href="pages/watchlist.html">Open</a>
+				</div>
+				<div class="list" id="watchlist-preview">
+					<div class="list__row muted">No tickers yet. Add some on the Watchlist page.</div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<div class="container footer__inner">
+			<span class="muted">© <span id="year"></span> MacroLens</span>
+			<span class="muted">Glass Minimal • HTML/CSS/JS</span>
+		</div>
+	</footer>
 </body>
 </html>
