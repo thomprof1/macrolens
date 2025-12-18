@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>MacroLens • Watchlist</title>
+	<link rel="stylesheet" href="../assets/css/styles.css">
+	<script src="../assets/js/app.js" defer></script>
+</head>
+<body>
+	<header class="topbar">
+		<div class="container topbar__inner">
+			<a class="brand" href="../index.html">
+				<span class="brand__mark">ML</span>
+				<span class="brand__text">MacroLens</span>
+			</a>
+
+			<nav class="nav" data-nav>
+				<a class="nav__link" href="../index.html">Dashboard</a>
+				<a class="nav__link" href="calendar.html">Calendar</a>
+				<a class="nav__link" href="earnings.html">Earnings</a>
+				<a class="nav__link" href="news.html">News</a>
+				<a class="nav__link" href="links.html">Sources</a>
+				<a class="nav__link is-active" href="watchlist.html">Watchlist</a>
+			</nav>
+
+			<div class="topbar__actions">
+				<button class="iconbtn" type="button" data-nav-toggle aria-label="Open menu">
+					<span class="iconbtn__label">Menu</span>
+				</button>
+
+				<button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle theme">
+					<span class="iconbtn__dot" aria-hidden="true"></span>
+					<span class="iconbtn__label" data-theme-label>Light</span>
+				</button>
+			</div>
+		</div>
+	</header>
+
+	<main class="container stack">
+		<section class="panel glass">
+			<div class="panel__head">
+				<h1 class="h2">Watchlist</h1>
+				<span class="muted">Saved locally (no login)</span>
+			</div>
+
+			<div class="controls">
+				<input class="input" id="wl-input" type="text" placeholder="Add ticker (ex: AAPL, MSFT, NVDA)" autocomplete="off">
+				<select class="select" id="wl-market">
+					<option value="ALL">All</option>
+					<option value="US">US</option>
+					<option value="CRYPTO">Crypto</option>
+				</select>
+				<button class="btn" id="wl-add" type="button">Add</button>
+			</div>
+
+			<div class="panel__head" style="margin-top:10px;">
+				<h2 class="h2">Your Tickers</h2>
+				<button class="btn btn--ghost btn--sm" id="wl-clear" type="button">Clear</button>
+			</div>
+
+			<div class="list" id="wl-list">
+				<div class="list__row muted">No tickers yet.</div>
+			</div>
+
+			<p class="muted" style="margin-top:14px;">
+				Next: show price, % change, and earnings date for watchlist tickers.
+			</p>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<div class="container footer__inner">
+			<span class="muted">© <span id="year"></span> MacroLens</span>
+		</div>
+	</footer>
+</body>
+</html>
