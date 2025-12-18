@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>MacroLens • Earnings</title>
+	<link rel="stylesheet" href="../assets/css/styles.css">
+	<script src="../assets/js/app.js" defer></script>
+</head>
+<body>
+	<header class="topbar">
+		<div class="container topbar__inner">
+			<a class="brand" href="../index.html">
+				<span class="brand__mark">ML</span>
+				<span class="brand__text">MacroLens</span>
+			</a>
+
+			<nav class="nav" data-nav>
+				<a class="nav__link" href="../index.html">Dashboard</a>
+				<a class="nav__link" href="calendar.html">Calendar</a>
+				<a class="nav__link is-active" href="earnings.html">Earnings</a>
+				<a class="nav__link" href="news.html">News</a>
+				<a class="nav__link" href="links.html">Sources</a>
+				<a class="nav__link" href="watchlist.html">Watchlist</a>
+			</nav>
+
+			<div class="topbar__actions">
+				<button class="iconbtn" type="button" data-nav-toggle aria-label="Open menu">
+					<span class="iconbtn__label">Menu</span>
+				</button>
+
+				<button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle theme">
+					<span class="iconbtn__dot" aria-hidden="true"></span>
+					<span class="iconbtn__label" data-theme-label>Light</span>
+				</button>
+			</div>
+		</div>
+	</header>
+
+	<main class="container stack">
+		<section class="panel glass">
+			<div class="panel__head">
+				<h1 class="h2">Earnings</h1>
+				<span class="muted">Starter table (we’ll connect real earnings next)</span>
+			</div>
+
+			<div class="controls controls--4">
+				<input class="input" id="er-ticker" type="text" placeholder="Filter by ticker (AAPL, NVDA…)">
+				<select class="select" id="er-session">
+					<option value="all">All sessions</option>
+					<option value="amc">After close (AMC)</option>
+					<option value="bmo">Before open (BMO)</option>
+				</select>
+				<select class="select" id="er-sort">
+					<option value="date">Sort: Date</option>
+					<option value="ticker">Sort: Ticker</option>
+				</select>
+				<button class="btn" id="er-reset" type="button">Reset</button>
+			</div>
+
+			<div class="list" id="er-list"></div>
+
+			<p class="muted" style="margin-top:16px;">
+				Next: pull earnings from a provider + show market cap + implied move.
+			</p>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<div class="container footer__inner">
+			<span class="muted">© <span id="year"></span> MacroLens</span>
+			<span class="muted">Starter earnings</span>
+		</div>
+	</footer>
+
+	<script>
+		(() => {
+			const qs = (s) => document.querySelector(s);
+
+			const tEl = qs("#er-ticker");
+			const sEl = qs("#er-session");
+			const sortEl = qs("#er-sort");
+			const rEl = qs("#er-reset");
+			const listEl = qs("#er-list");
+
+			const today = new Date();
+			const addDays = (d) => new Date(today.getTime() + d * 24 * 60 * 60 * 1000);
+			const fmt = (d) => d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+
+			// Starter dataset
+			const rows = [
+				{ ticker: "AAPL", name: "Apple", date: addDays(7), session: "amc" },
+				{ ticker: "MSFT", name: "Microsoft", date: addDays(9), session: "amc" },
+				{ ticker: "NVDA", name: "NVIDIA", date: addDays(12), session: "amc" },
+				{ ticker: "AMZN", name: "Amazon", date: addDays(13), session: "amc" },
+				{ ticker: "TSLA", name: "Tesla", date: addDays(15), session: "amc" },
+				{ ticker: "GOOGL", name: "Alphabet", date: addDays(16), session: "amc" },
+				{ ticker: "META", name: "Meta", date: addDays(18), session: "amc" },
+				{ ticker: "JPM", name: "JPMorgan", date: addDays(5), session: "bmo" }
+			];
+
+			const render = () => {
+				const q = (tEl.value || "").trim().toUpperCase();
+				const sess = sEl.value;
+				const sort = sortEl.value;
+
+				let data = rows.filter((x) => {
+					const okQ = !q || x.ticker.includes(q);
+					const okS = sess === "all" || x.session === sess;
+					return okQ && okS;
+				});
+
+				if (sort === "ticker") data = data.sort((a, b) => a.ticker.localeCompare(b.ticker));
+				else data = data.sort((a, b) => a.date - b.date);
+
+				listEl.innerHTML = "";
+
+				if (!data.length) {
+					const row = document.createElement("div");
+					row.className = "list__row muted";
+					row.textContent = "No earnings match your filters.";
+					listEl.appendChild(row);
+					return;
+				}
+
+				data.forEach((x) => {
+					const row = document.createElement("div");
+					row.className = "list__row";
+
+					const left = document.createElement("div");
+					left.className = "list__left";
+					left.textContent = `${x.ticker} • ${fmt(x.date)}`;
+
+					const right = document.createElement("div");
+					right.className = "muted";
+					right.style.fontSize = "13px";
+					right.textContent = `${x.name} • ${x.session.toUpperCase()}`;
+
+					row.appendChild(left);
+					row.appendChild(right);
+					listEl.appendChild(row);
+				});
+			};
+
+			[tEl, sEl, sortEl].forEach((el) => el.addEventListener("input", render));
+			rEl.addEventListener("click", () => {
+				tEl.value = "";
+				sEl.value = "all";
+				sortEl.value = "date";
+				render();
+			});
+
+			render();
+		})();
+	</script>
+</body>
+</html>

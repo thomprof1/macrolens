@@ -10,7 +10,7 @@
 <body>
 	<header class="topbar">
 		<div class="container topbar__inner">
-			<a class="brand" href="../index.html">
+			<a class="brand" href="../index.html" aria-label="MacroLens Home">
 				<span class="brand__mark">ML</span>
 				<span class="brand__text">MacroLens</span>
 			</a>
@@ -41,18 +41,136 @@
 		<section class="panel glass">
 			<div class="panel__head">
 				<h1 class="h2">Market Events Calendar</h1>
-				<span class="muted">Coming next</span>
+				<span class="muted">Built-in starter list (we’ll connect real feeds next)</span>
 			</div>
-			<div class="list">
-				<div class="list__row muted">We’ll build this page next.</div>
+
+			<div class="controls controls--4">
+				<input class="input" id="cal-search" type="search" placeholder="Search (CPI, FOMC, NFP, GDP, PCE…)">
+				<select class="select" id="cal-type">
+					<option value="all">All types</option>
+					<option value="fed">Fed</option>
+					<option value="inflation">Inflation</option>
+					<option value="jobs">Jobs</option>
+					<option value="growth">Growth</option>
+					<option value="rates">Rates / Auctions</option>
+				</select>
+				<select class="select" id="cal-range">
+					<option value="30">Next 30 days</option>
+					<option value="60">Next 60 days</option>
+					<option value="90">Next 90 days</option>
+					<option value="365">Next 365 days</option>
+				</select>
+				<button class="btn" id="cal-reset" type="button">Reset</button>
 			</div>
+
+			<div class="list" id="cal-list"></div>
+
+			<p class="muted" style="margin-top:16px;">
+				Next: real economic calendar feed + caching so it stays fast.
+			</p>
 		</section>
 	</main>
 
 	<footer class="footer">
 		<div class="container footer__inner">
 			<span class="muted">© <span id="year"></span> MacroLens</span>
+			<span class="muted">Starter calendar</span>
 		</div>
 	</footer>
+
+	<script>
+		(() => {
+			const qs = (s) => document.querySelector(s);
+
+			const searchEl = qs("#cal-search");
+			const typeEl = qs("#cal-type");
+			const rangeEl = qs("#cal-range");
+			const resetEl = qs("#cal-reset");
+			const listEl = qs("#cal-list");
+
+			const now = new Date();
+			const addDays = (d) => new Date(now.getTime() + d * 24 * 60 * 60 * 1000);
+
+			// Starter events (placeholders). We’ll replace with real feeds later.
+			const events = [
+				{ name: "CPI (Consumer Price Index)", type: "inflation", date: addDays(10), impact: "High", notes: "Inflation read; markets react fast." },
+				{ name: "Core CPI", type: "inflation", date: addDays(10), impact: "High", notes: "Fed-sensitive inflation metric." },
+				{ name: "FOMC Rate Decision", type: "fed", date: addDays(21), impact: "Very High", notes: "Statement + Powell presser." },
+				{ name: "FOMC Minutes", type: "fed", date: addDays(35), impact: "Medium", notes: "Details on policy thinking." },
+				{ name: "Nonfarm Payrolls (NFP)", type: "jobs", date: addDays(17), impact: "Very High", notes: "Jobs / wages / unemployment." },
+				{ name: "Initial Jobless Claims", type: "jobs", date: addDays(3), impact: "Medium", notes: "Weekly labor signal." },
+				{ name: "GDP (Advance)", type: "growth", date: addDays(26), impact: "High", notes: "Growth snapshot; revisions matter." },
+				{ name: "PCE Inflation", type: "inflation", date: addDays(28), impact: "High", notes: "Fed’s preferred inflation gauge." },
+				{ name: "2Y/5Y/7Y Treasury Auctions", type: "rates", date: addDays(6), impact: "Medium", notes: "Can move yields and risk appetite." }
+			].sort((a, b) => a.date - b.date);
+
+			const fmt = (d) => d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+
+			const render = () => {
+				const q = (searchEl.value || "").trim().toLowerCase();
+				const type = typeEl.value;
+				const days = Number(rangeEl.value);
+
+				const cutoff = addDays(days);
+
+				const filtered = events.filter((e) => {
+					const inRange = e.date <= cutoff;
+					const okType = type === "all" || e.type === type;
+					const okQ = !q || (e.name + " " + e.notes).toLowerCase().includes(q);
+					return inRange && okType && okQ;
+				});
+
+				listEl.innerHTML = "";
+
+				if (!filtered.length) {
+					const row = document.createElement("div");
+					row.className = "list__row muted";
+					row.textContent = "No events match your filters.";
+					listEl.appendChild(row);
+					return;
+				}
+
+				filtered.forEach((e) => {
+					const row = document.createElement("div");
+					row.className = "list__row";
+
+					const left = document.createElement("div");
+					left.className = "list__left";
+					left.textContent = fmt(e.date);
+
+					const right = document.createElement("div");
+					right.style.display = "grid";
+					right.style.gap = "4px";
+					right.style.justifyItems = "end";
+
+					const title = document.createElement("div");
+					title.style.fontWeight = "900";
+					title.textContent = e.name;
+
+					const sub = document.createElement("div");
+					sub.className = "muted";
+					sub.style.fontSize = "13px";
+					sub.textContent = `Impact: ${e.impact} • ${e.notes}`;
+
+					right.appendChild(title);
+					right.appendChild(sub);
+
+					row.appendChild(left);
+					row.appendChild(right);
+					listEl.appendChild(row);
+				});
+			};
+
+			[searchEl, typeEl, rangeEl].forEach((el) => el.addEventListener("input", render));
+			resetEl.addEventListener("click", () => {
+				searchEl.value = "";
+				typeEl.value = "all";
+				rangeEl.value = "30";
+				render();
+			});
+
+			render();
+		})();
+	</script>
 </body>
 </html>

@@ -10,7 +10,7 @@
 <body>
 	<header class="topbar">
 		<div class="container topbar__inner">
-			<a class="brand" href="../index.html">
+			<a class="brand" href="../index.html" aria-label="MacroLens Home">
 				<span class="brand__mark">ML</span>
 				<span class="brand__text">MacroLens</span>
 			</a>
@@ -46,25 +46,16 @@
 
 			<div class="controls">
 				<input class="input" id="wl-input" type="text" placeholder="Add ticker (ex: AAPL, MSFT, NVDA)" autocomplete="off">
-				<select class="select" id="wl-market">
-					<option value="ALL">All</option>
-					<option value="US">US</option>
-					<option value="CRYPTO">Crypto</option>
-				</select>
 				<button class="btn" id="wl-add" type="button">Add</button>
-			</div>
-
-			<div class="panel__head" style="margin-top:10px;">
-				<h2 class="h2">Your Tickers</h2>
-				<button class="btn btn--ghost btn--sm" id="wl-clear" type="button">Clear</button>
+				<button class="btn btn--ghost" id="wl-clear" type="button">Clear</button>
 			</div>
 
 			<div class="list" id="wl-list">
 				<div class="list__row muted">No tickers yet.</div>
 			</div>
 
-			<p class="muted" style="margin-top:14px;">
-				Next: show price, % change, and earnings date for watchlist tickers.
+			<p class="muted" style="margin-top:16px;">
+				Next: add price, % change, and earnings date per ticker.
 			</p>
 		</section>
 	</main>

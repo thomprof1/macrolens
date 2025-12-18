@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>MacroLens • News</title>
+	<link rel="stylesheet" href="../assets/css/styles.css">
+	<script src="../assets/js/app.js" defer></script>
+</head>
+<body>
+	<header class="topbar">
+		<div class="container topbar__inner">
+			<a class="brand" href="../index.html">
+				<span class="brand__mark">ML</span>
+				<span class="brand__text">MacroLens</span>
+			</a>
+
+			<nav class="nav" data-nav>
+				<a class="nav__link" href="../index.html">Dashboard</a>
+				<a class="nav__link" href="calendar.html">Calendar</a>
+				<a class="nav__link" href="earnings.html">Earnings</a>
+				<a class="nav__link is-active" href="news.html">News</a>
+				<a class="nav__link" href="links.html">Sources</a>
+				<a class="nav__link" href="watchlist.html">Watchlist</a>
+			</nav>
+
+			<div class="topbar__actions">
+				<button class="iconbtn" type="button" data-nav-toggle aria-label="Open menu">
+					<span class="iconbtn__label">Menu</span>
+				</button>
+
+				<button class="iconbtn" type="button" data-theme-toggle aria-label="Toggle theme">
+					<span class="iconbtn__dot" aria-hidden="true"></span>
+					<span class="iconbtn__label" data-theme-label>Light</span>
+				</button>
+			</div>
+		</div>
+	</header>
+
+	<main class="container stack">
+		<section class="panel glass">
+			<div class="panel__head">
+				<h1 class="h2">News</h1>
+				<span class="muted">Starter headlines (we’ll connect RSS/API next)</span>
+			</div>
+
+			<div class="controls controls--4">
+				<input class="input" id="nw-search" type="search" placeholder="Search headlines (Fed, CPI, Tech, Oil…)">
+				<select class="select" id="nw-sector">
+					<option value="all">All sectors</option>
+					<option value="macro">Macro</option>
+					<option value="tech">Tech</option>
+					<option value="energy">Energy</option>
+					<option value="financials">Financials</option>
+				</select>
+				<select class="select" id="nw-sort">
+					<option value="newest">Sort: Newest</option>
+					<option value="oldest">Sort: Oldest</option>
+				</select>
+				<button class="btn" id="nw-reset" type="button">Reset</button>
+			</div>
+
+			<div class="list" id="nw-list"></div>
+
+			<p class="muted" style="margin-top:16px;">
+				Next: RSS aggregator + source badges + timestamps.
+			</p>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<div class="container footer__inner">
+			<span class="muted">© <span id="year"></span> MacroLens</span>
+			<span class="muted">Starter headlines</span>
+		</div>
+	</footer>
+
+	<script>
+		(() => {
+			const qs = (s) => document.querySelector(s);
+
+			const searchEl = qs("#nw-search");
+			const sectorEl = qs("#nw-sector");
+			const sortEl = qs("#nw-sort");
+			const resetEl = qs("#nw-reset");
+			const listEl = qs("#nw-list");
+
+			const now = new Date();
+			const minsAgo = (m) => new Date(now.getTime() - m * 60 * 1000);
+
+			const items = [
+				{ title: "Fed speakers hint at policy patience", sector: "macro", time: minsAgo(35), source: "Fed" },
+				{ title: "Tech megacaps lead index rebound", sector: "tech", time: minsAgo(75), source: "Market" },
+				{ title: "Oil volatility rises ahead of inventory data", sector: "energy", time: minsAgo(120), source: "Energy" },
+				{ title: "Banks watch yield curve as auctions approach", sector: "financials", time: minsAgo(200), source: "Rates" },
+				{ title: "Inflation expectations in focus this week", sector: "macro", time: minsAgo(260), source: "Macro" }
+			];
+
+			const fmt = (d) => d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+
+			const render = () => {
+				const q = (searchEl.value || "").trim().toLowerCase();
+				const sec = sectorEl.value;
+				const sort = sortEl.value;
+
+				let data = items.filter((x) => {
+					const okQ = !q || x.title.toLowerCase().includes(q);
+					const okS = sec === "all" || x.sector === sec;
+					return okQ && okS;
+				});
+
+				data = data.sort((a, b) => sort === "newest" ? (b.time - a.time) : (a.time - b.time));
+
+				listEl.innerHTML = "";
+
+				if (!data.length) {
+					const row = document.createElement("div");
+					row.className = "list__row muted";
+					row.textContent = "No headlines match your filters.";
+					listEl.appendChild(row);
+					return;
+				}
+
+				data.forEach((x) => {
+					const row = document.createElement("div");
+					row.className = "list__row";
+
+					const left = document.createElement("div");
+					left.className = "list__left";
+					left.textContent = x.title;
+
+					const right = document.createElement("div");
+					right.className = "muted";
+					right.style.fontSize = "13px";
+					right.style.textAlign = "right";
+					right.textContent = `${x.source} • ${fmt(x.time)}`;
+
+					row.appendChild(left);
+					row.appendChild(right);
+					listEl.appendChild(row);
+				});
+			};
+
+			[searchEl, sectorEl, sortEl].forEach((el) => el.addEventListener("input", render));
+			resetEl.addEventListener("click", () => {
+				searchEl.value = "";
+				sectorEl.value = "all";
+				sortEl.value = "newest";
+				render();
+			});
+
+			render();
+		})();
+	</script>
+</body>
+</html>
